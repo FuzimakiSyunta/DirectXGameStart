@@ -1,28 +1,37 @@
-﻿#include"Model.h"
-#include"WorldTransform.h"
+﻿#pragma once
+#include "Input.h"
+#include "Model.h"
+#include "WorldTransform.h"
 
-///<summary>
-///自キャラ
-/// </summary>
+///< summary>
+/// 自キャラ
+///</summary>
 class Player {
 public:
-	//初期化
-	void Initialize(Model*model,uint32_t textureHandle);
+	///< summary>
+	/// 初期化
+	///</summary>
+	///< param name="model">モデル</param>
+	///< param name="textureHandle">テクスチャハンドル</param>
+	void Initialize(Model* model, uint32_t textureHandle);
 
-	//更新
-	void Update();
+	///< summary>
+	/// 更新
+	///</summary>
+	void Updete();
 
-	//描画
+	///< summary>
+	/// 描画
+	///</summary>
 	void Draw(ViewProjection& viewProjection);
 
 private:
-	//ワールド変換データ
+	// ワールド変換データ
 	WorldTransform worldTransform_;
-	//モデル
+	// モデル
 	Model* model_ = nullptr;
-	//テクスチャハンドル
+	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	// 自キャラ
-	Player* player_ = nullptr;
-
+	// キーボード入力
+	Input* input_ = nullptr;
 };

@@ -2,11 +2,9 @@
 #include "TextureManager.h"
 #include <cassert>
 
-
 GameScene::GameScene() {}
 
-GameScene::~GameScene() 
-{
+GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 }
@@ -16,28 +14,31 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("nuo.png");
 	model_ = Model::Create();
-	//ワールドトランスフォーム初期化
-	worldTransform_.Initialize();
-	//ビュープロジェクションの初期化
+	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
-	//自キャラの生成
+	// 自キャラの生成
 	player_ = new Player();
-	//自キャラの初期化
-	player_->Initialize(model_,textureHandle_);
+	// 自キャラの初期化
+	player_->Initialize(model_, textureHandle_);
+	//平行移動行列
+	Matrix4x4 matTrans;
+
+	matTrans.m[0][0] = 1;
+	matTrans.m[1][1] = 1;
+	matTrans.m[2][2] = 1;
+	matTrans.m[3][3] = 1;
+	/*matTrans.m[3][0] = ;*/
 }
 
 void GameScene::Update() {
-//自キャラの更新
-	player_->Update();
-
-
+	// 自キャラの更新
+	player_->Updete();
 }
 
 void GameScene::Draw() {
-	
-
 
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
