@@ -30,7 +30,7 @@ void GameScene::Initialize() {
 	matTrans.m[1][1] = 1;
 	matTrans.m[2][2] = 1;
 	matTrans.m[3][3] = 1;
-	/*matTrans.m[3][0] = ;*/
+	//matTrans.m[3][0] = ;
 }
 
 void GameScene::Update() {
