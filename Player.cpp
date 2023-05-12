@@ -1,6 +1,43 @@
 ﻿#include "Player.h"
 #include <cassert>
 
+Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
+	Matrix4x4 result;
+	result.m[0][0] = m1.m[0][0] * m2.m[0][0] + m1.m[0][1] * m2.m[1][0] + m1.m[0][2] * m2.m[2][0] +
+	                 m1.m[0][3] * m2.m[3][0];
+	result.m[0][1] = m1.m[0][0] * m2.m[0][1] + m1.m[0][1] * m2.m[1][1] + m1.m[0][2] * m2.m[2][1] +
+	                 m1.m[0][3] * m2.m[3][1];
+	result.m[0][2] = m1.m[0][0] * m2.m[0][2] + m1.m[0][1] * m2.m[1][2] + m1.m[0][2] * m2.m[2][2] +
+	                 m1.m[0][3] * m2.m[3][2];
+	result.m[0][3] = m1.m[0][0] * m2.m[0][3] + m1.m[0][1] * m2.m[1][3] + m1.m[0][2] * m2.m[2][3] +
+	                 m1.m[0][3] * m2.m[3][3];
+	result.m[1][0] = m1.m[1][0] * m2.m[0][0] + m1.m[1][1] * m2.m[1][0] + m1.m[1][2] * m2.m[2][0] +
+	                 m1.m[1][3] * m2.m[3][0];
+	result.m[1][1] = m1.m[1][0] * m2.m[0][1] + m1.m[1][1] * m2.m[1][1] + m1.m[1][2] * m2.m[2][1] +
+	                 m1.m[1][3] * m2.m[3][1];
+	result.m[1][2] = m1.m[1][0] * m2.m[0][2] + m1.m[1][1] * m2.m[1][2] + m1.m[1][2] * m2.m[2][2] +
+	                 m1.m[1][3] * m2.m[3][2];
+	result.m[1][3] = m1.m[1][0] * m2.m[0][3] + m1.m[1][1] * m2.m[1][3] + m1.m[1][2] * m2.m[2][3] +
+	                 m1.m[1][3] * m2.m[3][3];
+	result.m[2][0] = m1.m[2][0] * m2.m[0][0] + m1.m[2][1] * m2.m[1][0] + m1.m[2][2] * m2.m[2][0] +
+	                 m1.m[2][3] * m2.m[3][0];
+	result.m[2][1] = m1.m[2][0] * m2.m[0][1] + m1.m[2][1] * m2.m[1][1] + m1.m[2][2] * m2.m[2][1] +
+	                 m1.m[2][3] * m2.m[3][1];
+	result.m[2][2] = m1.m[2][0] * m2.m[0][2] + m1.m[2][1] * m2.m[1][2] + m1.m[2][2] * m2.m[2][2] +
+	                 m1.m[2][3] * m2.m[3][2];
+	result.m[2][3] = m1.m[2][0] * m2.m[0][3] + m1.m[2][1] * m2.m[1][3] + m1.m[2][2] * m2.m[2][3] +
+	                 m1.m[2][3] * m2.m[3][3];
+	result.m[3][0] = m1.m[3][0] * m2.m[0][0] + m1.m[3][1] * m2.m[1][0] + m1.m[3][2] * m2.m[2][0] +
+	                 m1.m[3][3] * m2.m[3][0];
+	result.m[3][1] = m1.m[3][0] * m2.m[0][1] + m1.m[3][1] * m2.m[1][1] + m1.m[3][2] * m2.m[2][1] +
+	                 m1.m[3][3] * m2.m[3][1];
+	result.m[3][2] = m1.m[3][0] * m2.m[0][2] + m1.m[3][1] * m2.m[1][2] + m1.m[3][2] * m2.m[2][2] +
+	                 m1.m[3][3] * m2.m[3][2];
+	result.m[3][3] = m1.m[3][0] * m2.m[0][3] + m1.m[3][1] * m2.m[1][3] + m1.m[3][2] * m2.m[2][3] +
+	                 m1.m[3][3] * m2.m[3][3];
+	return result;
+};
+
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 	assert(model);
 
@@ -19,6 +56,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	//x,y,z方向のスケーリングを設定
 	worldTransform_.scale_ = {5.0f, 1.0f, 1.0f};
+
+	//x,y,z方向のスケーリング
+	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 }
@@ -34,8 +75,6 @@ void Player::Updete() {
 
 	// x,y,z方向の回転を設定
 	worldTransform_.rotation_ = {0.0f, 0.0f, 0.0f};
-
-	
 
 	// x軸回転行列を宣言
 	Matrix4x4 matRotX;
@@ -64,14 +103,28 @@ void Player::Updete() {
 	matRotZ.m[2][2] = cosf(worldTransform_.rotation_.z);
 	matRotZ.m[3][3] = 1;
 
-	//Matrix4x4 matRot = matRotZ * matRotX * matRotY;
+	Matrix4x4 matrot = Multiply(matRotZ, Multiply(matRotX, matRotY));
+
+	//平行移動行列を宣言
+	Matrix4x4 matTrans;
+
+	matTrans.m[0][0] = 1;
+	matTrans.m[1][1] = 1;
+	matTrans.m[2][2] = 1;
+	matTrans.m[3][3] = 1;
+	matTrans.m[3][0] = worldTransform_.translation_.x;
+	matTrans.m[3][1] = worldTransform_.translation_.y;
+	matTrans.m[3][2] = worldTransform_.translation_.z;
+
+	worldTransform_.matWorld_ = Multiply(matScale, Multiply(matrot, matTrans));
+
 
 	// 行列の転送 行列の計算後に行う
 	worldTransform_.TransferMatrix();
 
 	worldTransform_.matWorld_;
 
-	//worldTransform_.matWorld_ = worldTransform_.scale_ * worldTransform_.rotation_ * worldTransform_.matWorld_;
+	//1]worldTransform_.matWorld_ = worldTransform_.scale_ * worldTransform_.rotation_ * worldTransform_.matWorld_;
 
 	// 行列を定数バッファに転送
 	worldTransform_.TransferMatrix();
