@@ -1,12 +1,14 @@
 #include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include"AxisIndicator.h"
 
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
+	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
@@ -23,19 +25,41 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
-	//平行移動行列
-	Matrix4x4 matTrans;
+	//デバックカメラの生成
+	debugCamera_ = new DebugCamera(1270, 720);
+	//軸方向表示を有効にする
+	AxisIndicator::GetInstance()->SetVisible(true);
 
-	matTrans.m[0][0] = 1;
-	matTrans.m[1][1] = 1;
-	matTrans.m[2][2] = 1;
-	matTrans.m[3][3] = 1;
-	//matTrans.m[3][0] = ;
+	//軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し）
+	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 }
 
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Updete();
+	if (isDebugCameraActive_) {
+		// デバックカメラの更新
+		debugCamera_->Update();
+		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+		//ビュープロジェクション行列の転送
+		viewProjection_.TransferMatrix();
+	} else {
+		//ビュープロジェクション行列の更新と転送
+		viewProjection_.UpdateMatrix();
+
+	}
+	/*debug*/
+#ifdef _DEBUG
+	if (input_->TriggerKey(DIK_T))
+	{
+		isDebugCameraActive_ = true;
+	}
+	if (input_->TriggerKey(DIK_F)) {
+		isDebugCameraActive_ = false;
+	}
+#endif // _DEBUG
+	
 }
 
 void GameScene::Draw() {
