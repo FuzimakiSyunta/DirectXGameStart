@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "PlayerBullet.h"
 #include"Input.h"
+#include<list>
 
 ///< summary>
 /// 自キャラ
@@ -10,6 +11,10 @@ public:
 	///< summary>
 	/// 初期化
 	///</summary>
+	//デストラクタ
+	~Player();
+	
+	/// 
 	///< param name="model">モデル</param>
 	///< param name="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
@@ -21,15 +26,15 @@ public:
 
 	void Attack();
 
-
+	
 	///< summary>
 	/// 描画
 	///</summary>
 	void Draw(ViewProjection& viewProjection);
 
 private:
-	//弾
-	PlayerBullet* bullet_ = nullptr;
+	// 弾
+	std::list<PlayerBullet*> bullets_;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル
