@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "Input.h"
-#include "Model.h"
-#include "WorldTransform.h"
+#include "PlayerBullet.h"
+#include"Input.h"
 
 ///< summary>
 /// 自キャラ
@@ -20,12 +19,17 @@ public:
 	///</summary>
 	void Updete();
 
+	void Attack();
+
+
 	///< summary>
 	/// 描画
 	///</summary>
 	void Draw(ViewProjection& viewProjection);
 
 private:
+	//弾
+	PlayerBullet* bullet_ = nullptr;
 	// ワールド変換データ
 	WorldTransform worldTransform_;
 	// モデル

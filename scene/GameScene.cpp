@@ -9,6 +9,7 @@ GameScene::~GameScene() {
 	delete model_;
 	delete player_;
 	delete debugCamera_;
+	
 }
 
 void GameScene::Initialize() {
@@ -25,8 +26,11 @@ void GameScene::Initialize() {
 	player_ = new Player();
 	// 自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+	
+
 	//デバックカメラの生成
 	debugCamera_ = new DebugCamera(1270, 720);
+
 	//軸方向表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 
